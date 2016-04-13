@@ -1,4 +1,5 @@
 require 'mina/hooks'
+require 'openssl'
 
 require 'json'
 require 'net/http'
@@ -25,7 +26,7 @@ namespace :slack do
   end
 
   task :finished do
-    if slack_url and slack_room
+    if slack_token and slack_channel
       end_time = Time.now
       start_time = fetch(:start_time)
       elapsed = end_time.to_i - start_time.to_i
@@ -62,24 +63,17 @@ namespace :slack do
 
   def post_slack_message(message)
     # Parse the URI and handle the https connection
-    uri = URI.parse(slack_url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
     payload = {
       "parse"       => "full",
-      "channel"     => slack_room,
+      "channel"     => slack_channel,
       "username"    => slack_username,
+      "token"       => slack_token,
       "text"        => message,
       "icon_emoji"  => slack_emoji
     }
 
-    # Create the post request and setup the form data
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.set_form_data(:payload => payload.to_json)
+    url = "#{slack_api_base_url}?#{URI.encode_www_form(payload)}"
 
-    # Make the actual request to the API
-    http.request(request)
+    result = Net::HTTP.get(URI.parse(url))
   end
 end
