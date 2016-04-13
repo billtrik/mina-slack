@@ -16,6 +16,7 @@ namespace :slack do
     if slack_url and slack_room
       announcement = "#{announced_deployer} is deploying #{announced_application_name} to #{announced_stage}"
 
+      print_local_status "Posting: '#{announcement}' to slack"
       post_slack_message(announcement)
       set(:start_time, Time.now)
     else
@@ -31,6 +32,7 @@ namespace :slack do
 
       announcement = "#{announced_deployer} successfully deployed #{announced_application_name} in #{elapsed} seconds."
 
+      print_local_status "Posting: '#{announcement}' to slack"
       post_slack_message(announcement)
     else
       print_local_status "Unable to create Slack Announcement, no slack details provided."
