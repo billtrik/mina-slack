@@ -1,6 +1,7 @@
 # Required
-set_default :slack_url,       -> { ENV['SLACK_URL'] }
-set_default :slack_room,        -> { ENV['SLACK_ROOM'] }
+set :slack_api_base_url,        -> { ENV['SLACK_URL'] || 'https://slack.com/api/chat.postMessage' }
+set :slack_token,               -> { ENV['SLACK_TOKEN'] }
+set :slack_channel,             -> { ENV['SLACK_CHANNEL'] }
 # Optional
 set_default :slack_stage,       -> { ENV['SLACK_STAGE'] || ENV['to'] || fetch(:rails_env, 'production') }
 set_default :slack_application, -> { ENV['SLACK_APPLICATION'] || application }
